@@ -12,12 +12,15 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.function.Function;
 
+import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
 import static java.util.Arrays.asList;
 
 public class OtherServiceExamples {
 
-    static ChatLanguageModel chatLanguageModel = OpenAiChatModel.withApiKey(ApiKeys.OPENAI_API_KEY);
-
+    static ChatLanguageModel chatLanguageModel = OpenAiChatModel.builder()
+            .apiKey(ApiKeys.OPENAI_API_KEY)
+            .modelName(GPT_4_O_MINI)
+            .build();
 
     static class Sentiment_Extracting_AI_Service_Example {
 
@@ -135,6 +138,8 @@ public class OtherServiceExamples {
 
         static class Person {
 
+            @Description("first name of a person")
+            // you can add an optional description to help an LLM have a better understanding
             private String firstName;
             private String lastName;
             private LocalDate birthDate;
@@ -151,19 +156,23 @@ public class OtherServiceExamples {
 
         interface PersonExtractor {
 
-            @UserMessage("Extract information about a person from {{it}}")
+            @UserMessage("Extract a person from the following text: {{it}}")
             Person extractPersonFrom(String text);
         }
 
         public static void main(String[] args) {
 
             ChatLanguageModel chatLanguageModel = OpenAiChatModel.builder()
-                    .apiKey(System.getenv("OPENAI_API_KEY"))
+                    .apiKey(ApiKeys.OPENAI_API_KEY)
+                    .modelName(GPT_4_O_MINI)
                     // When extracting POJOs with the LLM that supports the "json mode" feature
-                    // (e.g., OpenAI, Azure OpenAI, Ollama, etc.), it is advisable to use it to get more reliable results.
+                    // (e.g., OpenAI, Azure OpenAI, Vertex AI Gemini, Ollama, etc.),
+                    // it is advisable to enable it (json mode) to get more reliable results.
                     // When using this feature, LLM will be forced to output a valid JSON.
-                    // Please note that this feature is not (yet) supported when using "demo" key.
-                    .responseFormat("json_object")
+                    .responseFormat("json_schema")
+                    .strictJsonSchema(true) // https://docs.langchain4j.dev/integrations/language-models/open-ai#structured-outputs-for-json-mode
+                    .logRequests(true)
+                    .logResponses(true)
                     .build();
 
             PersonExtractor extractor = AiServices.create(PersonExtractor.class, chatLanguageModel);
@@ -221,6 +230,19 @@ public class OtherServiceExamples {
         }
 
         public static void main(String[] args) {
+
+            ChatLanguageModel chatLanguageModel = OpenAiChatModel.builder()
+                    .apiKey(ApiKeys.OPENAI_API_KEY)
+                    .modelName(GPT_4_O_MINI)
+                    // When extracting POJOs with the LLM that supports the "json mode" feature
+                    // (e.g., OpenAI, Azure OpenAI, Vertex AI Gemini, Ollama, etc.),
+                    // it is advisable to enable it (json mode) to get more reliable results.
+                    // When using this feature, LLM will be forced to output a valid JSON.
+                    .responseFormat("json_schema")
+                    .strictJsonSchema(true) // https://docs.langchain4j.dev/integrations/language-models/open-ai#structured-outputs-for-json-mode
+                    .logRequests(true)
+                    .logResponses(true)
+                    .build();
 
             Chef chef = AiServices.create(Chef.class, chatLanguageModel);
 

@@ -4,7 +4,6 @@ import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.TokenWindowChatMemory;
 import dev.langchain4j.model.StreamingResponseHandler;
-import dev.langchain4j.model.Tokenizer;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiTokenizer;
 import dev.langchain4j.model.output.Response;
@@ -13,15 +12,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static dev.langchain4j.data.message.UserMessage.userMessage;
+import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
 
 public class _05_Memory {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
-        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.withApiKey(ApiKeys.OPENAI_API_KEY);
+        OpenAiStreamingChatModel model = OpenAiStreamingChatModel.builder()
+                .apiKey(ApiKeys.OPENAI_API_KEY)
+                .modelName(GPT_4_O_MINI)
+                .build();
 
-        Tokenizer tokenizer = new OpenAiTokenizer("gpt-3.5-turbo");
-        ChatMemory chatMemory = TokenWindowChatMemory.withMaxTokens(1000, tokenizer);
+        ChatMemory chatMemory = TokenWindowChatMemory.withMaxTokens(1000, new OpenAiTokenizer());
 
         SystemMessage systemMessage = SystemMessage.from(
                 "You are a senior developer explaining to another senior developer, "

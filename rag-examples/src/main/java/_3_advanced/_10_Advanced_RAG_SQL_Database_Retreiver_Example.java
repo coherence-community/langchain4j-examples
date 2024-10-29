@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
 import static shared.Utils.*;
 
 public class _10_Advanced_RAG_SQL_Database_Retreiver_Example {
@@ -52,7 +53,10 @@ public class _10_Advanced_RAG_SQL_Database_Retreiver_Example {
 
         DataSource dataSource = createDataSource();
 
-        ChatLanguageModel chatLanguageModel = OpenAiChatModel.withApiKey(OPENAI_API_KEY);
+        ChatLanguageModel chatLanguageModel = OpenAiChatModel.builder()
+                .apiKey(OPENAI_API_KEY)
+                .modelName(GPT_4_O_MINI)
+                .build();
 
         ContentRetriever contentRetriever = SqlDatabaseContentRetriever.builder()
                 .dataSource(dataSource)

@@ -11,6 +11,8 @@ import java.util.List;
 
 import static dev.langchain4j.data.message.SystemMessage.systemMessage;
 import static dev.langchain4j.data.message.UserMessage.userMessage;
+import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
+import static dev.langchain4j.model.openai.OpenAiLanguageModelName.GPT_3_5_TURBO_INSTRUCT;
 import static java.util.Arrays.asList;
 
 public class StreamingExamples {
@@ -19,8 +21,11 @@ public class StreamingExamples {
 
         public static void main(String[] args) {
 
-            // Sorry, "demo" API key does not support streaming (yet). Please use your own key.
-            StreamingChatLanguageModel model = OpenAiStreamingChatModel.withApiKey(System.getenv("OPENAI_API_KEY"));
+            // Sorry, "demo" API key does not support streaming. Please use your own key.
+            StreamingChatLanguageModel model = OpenAiStreamingChatModel.builder()
+                    .apiKey(ApiKeys.OPENAI_API_KEY)
+                    .modelName(GPT_4_O_MINI)
+                    .build();
 
             List<ChatMessage> messages = asList(
                     systemMessage("You are a very sarcastic assistant"),
@@ -51,8 +56,11 @@ public class StreamingExamples {
 
         public static void main(String[] args) {
 
-            // Sorry, "demo" API key does not support streaming (yet). Please use your own key.
-            StreamingLanguageModel model = OpenAiStreamingLanguageModel.withApiKey(System.getenv("OPENAI_API_KEY"));
+            // Sorry, "demo" API key does not support streaming. Please use your own key.
+            StreamingLanguageModel model = OpenAiStreamingLanguageModel.builder()
+                    .apiKey(ApiKeys.OPENAI_API_KEY)
+                    .modelName(GPT_3_5_TURBO_INSTRUCT)
+                    .build();
 
             model.generate("Tell me a joke", new StreamingResponseHandler<String>() {
 
